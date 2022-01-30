@@ -2,23 +2,17 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>关于 | LD技术分享</title>
+<title>全链路监控 | LD技术分享</title>
 <link rel="shortcut icon" href="https://abigonion.github.io/favicon.ico?v=1643530106706">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://abigonion.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="关于 | LD技术分享 - Atom Feed" href="https://abigonion.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="全链路监控 | LD技术分享 - Atom Feed" href="https://abigonion.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="
-欢迎来到我的小站呀，很高兴遇见你！🤝
-
-🏠 关于本站
-👨‍💻 博主是谁
-⛹ 兴趣爱好
-📬 联系我呀
-..." />
+    <meta name="description" content="APM概念介绍
+APM(Application Performance Management)对应用程序性能和可用性的监控管理系统。它主要有这三个方面的内容，分别是 Logs(日志)、 Traces(链路追踪)和 Metrics(报表统计)..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -81,37 +75,54 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              关于
+              全链路监控
             </h2>
             <div class="post-info">
               <span>
-                2019-01-25
+                2022-01-30
               </span>
               <span>
-                1 min read
+                3 min read
               </span>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+                <h2 id="apm概念介绍">APM概念介绍</h2>
+<p>APM(Application Performance Management)对应用程序性能和可用性的监控管理系统。它主要有这三个方面的内容，分别是 Logs(日志)、 Traces(链路追踪)和 Metrics(报表统计)。简单描述就是通过各种探针采集并上报数据，收集关键指标，同时搭配数据展示以实现对应用程序性能管理和故障管理的系统化解决方案。</p>
+<h2 id="主流的开源apm产品">主流的开源APM产品</h2>
+<p>CAT：是由国内美团点评开源的，基于Java语言开发，目前提供Java、C/C++、Node.js、Python、Go等语言的客户端，监控数据会全量统计，国内很多公司在用，例如美团点评、携程、拼多多等，使用的时候，需要在应用程序中埋点，对代码侵入性强。</p>
+<p>Zipkin：由Twitter公司开发并开源，Java语言实现，侵入性相对于CAT要低一点，需要对web.xml之类的配置文件做修改，依然对代码有侵入。</p>
+<p>Pinpoint：一个韩国团队开源的产品，运用了字节码增强技术，只需要在启动时添加启动参数即可，对代码无侵入，目前支持Java和PHP语言，底层采用HBase来存储数据，探针收集的数据粒度非常细，但是性能损耗大，因其出现的时间较长，完成度也很高。</p>
+<p>SkyWalking：国人开源的产品，主要开发人员来自于华为，2019年4月17日Apache董事会批准SkyWalking成为顶级项目，支持Java、.Net、NodeJs等探针，数据存储支持Mysql、Elasticsearch等，跟Pinpoint一样采用字节码注入的方式实现代码的无侵入，探针采集数据粒度粗，但性能表现优秀，且对云原生支持，目前增长势头强劲，社区活跃，中文文档没有语言障碍。</p>
+<h2 id="skywalking架构是怎样的">Skywalking架构是怎样的？</h2>
+<p><img src="https://abigonion.github.io/post-images/1643529963334.png" alt="" loading="lazy"><br>
+上述架构图中主要分为四个部分，如下：</p>
+<ul>
+<li>
+<p>上面的Agent：负责收集日志数据，并且传递给中间的OAP服务器</p>
+</li>
+<li>
+<p>中间的OAP：负责接收 Agent 发送的 Tracing 和Metric的数据信息，然后进行分析(Analysis Core) ，存储到外部存储器( Storage )，最终提供查询( Query )功能。</p>
+</li>
+<li>
+<p>左面的UI：负责提供web控制台，查看链路，查看各种指标，性能等等。</p>
+</li>
+<li>
+<p>右面Storage：负责数据的存储，支持多种存储类型。</p>
+</li>
+</ul>
+<p>看了架构图之后，思路很清晰了，Agent负责收集日志传输数据，通过GRPC的方式传递给OAP进行分析并且存储到数据库中，最终通过UI界面将分析的统计报表、服务依赖、拓扑关系图展示出来。</p>
 
               </div>
               <div class="toc-container">
                 <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E5%8D%9A%E4%B8%BB%E6%98%AF%E8%B0%81">👨‍💻 博主是谁</a></li>
-<li><a href="#%E5%85%B4%E8%B6%A3%E7%88%B1%E5%A5%BD">⛹ 兴趣爱好</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#apm%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D">APM概念介绍</a></li>
+<li><a href="#%E4%B8%BB%E6%B5%81%E7%9A%84%E5%BC%80%E6%BA%90apm%E4%BA%A7%E5%93%81">主流的开源APM产品</a></li>
+<li><a href="#skywalking%E6%9E%B6%E6%9E%84%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84">Skywalking架构是怎样的？</a></li>
 </ul>
 </li>
 </ul>
