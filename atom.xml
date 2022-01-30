@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://abigonion.github.io</id>
+    <title>LD技术分享</title>
+    <updated>2022-01-30T07:11:11.210Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://abigonion.github.io"/>
+    <link rel="self" href="https://abigonion.github.io/atom.xml"/>
+    <subtitle>LD技术分享</subtitle>
+    <logo>https://abigonion.github.io/images/avatar.png</logo>
+    <icon>https://abigonion.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2022, LD技术分享</rights>
+</feed>
