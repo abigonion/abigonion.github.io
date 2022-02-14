@@ -2,23 +2,19 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>关于 | LD技术分享</title>
+<title>Solidity内存布局 | LD技术分享</title>
 <link rel="shortcut icon" href="https://abigonion.github.io/favicon.ico?v=1644817273180">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://abigonion.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="关于 | LD技术分享 - Atom Feed" href="https://abigonion.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="Solidity内存布局 | LD技术分享 - Atom Feed" href="https://abigonion.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="
-欢迎来到我的小站呀，很高兴遇见你！🤝
+    <meta name="description" content="Solidity保留了四个32字节的插槽，字节范围(包括端点)特定用途如下：
 
-🏠 关于本站
-👨‍💻 博主是谁
-⛹ 兴趣爱好
-📬 联系我呀
-..." />
+0x00 - 0x3f (64 字节): 用于哈希方法的暂存空间（临时空间）
+0x40 - 0x5f (32 字节): 当前分配的内存大小(也作为空闲内存指针)..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -81,46 +77,51 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              关于
+              Solidity内存布局
             </h2>
             <div class="post-info">
               <span>
-                2019-01-25
+                2022-02-14
               </span>
               <span>
-                1 min read
+                2 min read
               </span>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+                <p>Solidity保留了四个32字节的插槽，字节范围(包括端点)特定用途如下：</p>
+<ul>
+<li><code>0x00</code> - <code>0x3f</code> (64 字节): 用于哈希方法的暂存空间（临时空间）</li>
+<li><code>0x40</code> - <code>0x5f</code> (32 字节): 当前分配的内存大小(也作为空闲内存指针)</li>
+<li><code>0x60</code> - <code>0x7f</code> (32 字节): 零位插槽</li>
+</ul>
+<p>暂存空间可以在语句之间使用 (例如在内联汇编中)。 零位插槽用作动态内存数组的初始值，并且永远不应写入（空闲内存指针最初指向``0x80``）.</p>
+<p>Solidity 总是将新对象放在空闲内存指针上，并且内存永远不会被释放(将来可能会改变)。</p>
+<p>Solidity 中的内存数组中的元素始终占据32字节的倍数（对于 <code>byte[]</code> 总是这样，但对于 <code>bytes</code> 和 <code>string</code> 而言则不是）。</p>
+<p>多维内存数组是指向内存数组的指针，动态数组的长度存储在数组的第一个插槽中，然后是数组元素。</p>
+<p>警告</p>
+<p>Solidity中有一些需要临时存储区的操作需要大于64个字节， 因此无法放入暂存空间。 它们将被放置在空闲内存指向的位置，但是由于使用寿命短，指针不会更新。 内存可以归零，也可以不归零。 因此，不应指望空闲内存指针指向归零内存区域。</p>
+<p>尽管使用``msize``到达绝对归零的内存区域似乎是一个好主意，但使用此类非临时指针而不更新空闲内存指针可能会产生意外结果。</p>
 
               </div>
               <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E5%8D%9A%E4%B8%BB%E6%98%AF%E8%B0%81">👨‍💻 博主是谁</a></li>
-<li><a href="#%E5%85%B4%E8%B6%A3%E7%88%B1%E5%A5%BD">⛹ 兴趣爱好</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
-</ul>
-</li>
-</ul>
-
+                
               </div>
             </div>
           </article>
         </div>
 
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://abigonion.github.io/post/quan-lian-lu-jian-kong/">
+              <h3 class="post-title">
+                全链路监控
+              </h3>
+            </a>
+          </div>
         
 
         
